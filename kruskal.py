@@ -7,32 +7,36 @@ import math
 class Solution:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
         weights = {}
+        # make weights matrix
         self.initiate(weights, points)
         
         n = len(points)
-        print(n)
-        size = [1 for x in range(0, n)]
-        name = [x for x in range(0, n)]
-        nxt = [x for x in range(0, n)]
+        size = [1 for x in range(0, n)] # size of growing subtree
+        name = [x for x in range(0, n)] # name[v] is name of the tree of vertix v
+        nxt = [x for x in range(0, n)] # inside this list we store (as linked list) vertices of subtree to rename them in merge()
+
         tree = set()
         sortedEdges = sorted(weights.keys(), key=lambda x: weights[x])
         m = len(sortedEdges)
 
         for i in range(0, m):
+            # let's tale the minimum weught edge
             edge = sortedEdges[i]
             v, w = edge[0], edge[1]
+
+            # if they belong to different subtrees, take this edge to the minimum spanning tree
             if name[v] != name[w]:
                 tree.add(edge)
-                if size[w] <= size[v]:
+                if size[w] <= size[v]: # lets rename smallest tree (to optimize)
                     self.merge(v, w, size, name, nxt)
                 else:
                     self.merge(v, w, size, name, nxt)
 
-            if len(tree) == n - 1:
+            if len(tree) == n - 1: # it's a feature of tree that m (amout of edges) = n (amount of vertices)- 1
                 break
 
         s = 0
-        for i in tree:
+        for i in tree: #(order is not important)
             s += weights[i]
         return int(s)
 
@@ -45,11 +49,13 @@ class Solution:
         while name[u] != p:
             name[u] = p
             u = nxt[u]
-        
+
+        # to make it cycled (just so by design)
         v1 = nxt[v]
         w1 = nxt[w]
         nxt[v] = w1
         nxt[w] = v1
+        
         size[p] = size[p] + size[q]
 
     def initiate(self, weights, points):
