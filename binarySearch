@@ -1,0 +1,22 @@
+# https://leetcode.com/problems/search-a-2d-matrix/
+
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        n, m = len(matrix), len(matrix[0])
+        a , b = 0, n * m - 1
+
+        while b >= a:
+            midIndex = int((b + a) / 2)
+            x = int(midIndex // m)
+            y = int(midIndex % m)
+            midElement = matrix[x][y]
+
+            if midElement == target:
+                return True
+            elif target < midElement:
+                b = midIndex - 1
+            else:
+                a = midIndex + 1
+
+        return False   
+        
